@@ -1,13 +1,12 @@
 package br.com.glstecnologia.service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import br.com.glstecnologia.entity.Status;
 import br.com.glstecnologia.entity.Tarefa;
 import br.com.glstecnologia.repository.TarefaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,35 +47,34 @@ public class TarefaService {
         }
     }
 
-    // Buscar tarefa por ID
-    public Optional<Tarefa> buscarPorId(Long id) {
-        return tarefaRepository.findById(id);
+    // Criar uma nova tarefa
+    public Tarefa criarTarefa(Tarefa novaTarefa) {
+        return tarefaRepository.save(novaTarefa);
     }
 
-    // Criar ou atualizar uma tarefa
-    public Tarefa salvarTarefa(Tarefa tarefa) {
-        return tarefaRepository.save(tarefa);
-    }
-
-    // Deletar uma tarefa por ID
-    public void deletarTarefa(Long id) {
-        if (tarefaRepository.existsById(id)) {
-            tarefaRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("Tarefa com ID " + id + " não encontrada.");
-        }
-    }
-
-    // Atualizar status de uma tarefa
-    public Tarefa atualizarStatus(Long id, Status novoStatus) {
-        Optional<Tarefa> tarefaExistente = tarefaRepository.findById(id);
-        
-        if (tarefaExistente.isPresent()) {
-            Tarefa tarefa = tarefaExistente.get();
-            tarefa.setStatus(novoStatus);
+    // Atualizar uma tarefa existente
+    public Tarefa atualizarTarefa(Long id, Tarefa tarefaAtualizada) {
+        Optional<Tarefa> tarefaOptional = tarefaRepository.findById(id);
+        if (tarefaOptional.isPresent()) {
+            Tarefa tarefa = tarefaOptional.get();
+            tarefa.setTitulo(tarefaAtualizada.getTitulo());
+            tarefa.setDescricao(tarefaAtualizada.getDescricao());
+            tarefa.setStatus(tarefaAtualizada.getStatus());
+            // Atualizar outros campos conforme necessário
             return tarefaRepository.save(tarefa);
         } else {
-            throw new IllegalArgumentException("Tarefa com ID " + id + " não encontrada.");
+            throw new IllegalArgumentException("Tarefa não encontrada com ID: " + id);
         }
+    }
+
+    // Deletar uma tarefa
+    public void deletarTarefa(Long id) {
+        tarefaRepository.deleteById(id);
+    }
+
+    // Obter uma tarefa específica
+    public Tarefa obterTarefa(Long id) {
+        return tarefaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Tarefa não encontrada com ID: " + id));
     }
 }
