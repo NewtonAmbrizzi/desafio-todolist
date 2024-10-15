@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import br.com.glstecnologia.entity.Status;
 import br.com.glstecnologia.entity.Tarefa;
 import br.com.glstecnologia.repository.TarefaRepository;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,9 +18,34 @@ public class TarefaService {
     @Autowired
     private TarefaRepository tarefaRepository;
 
-    // Listar todas as tarefas
-    public List<Tarefa> listarTodas() {
-        return tarefaRepository.findAll();
+    // Listar tarefas com ordenação dinâmica e filtro por status
+    public List<Tarefa> listarTarefasOrdenadas(String campoOrdenacao, String direcaoOrdenacao, Status status) {
+        // Se não for fornecido um campo de ordenação, usar "dataCriacao" como padrão
+        if (campoOrdenacao == null || campoOrdenacao.isEmpty()) {
+            campoOrdenacao = "dataCriacao";  // Campo padrão
+        }
+
+        // Se não for fornecida uma direção de ordenação, usar "desc" como padrão
+        if (direcaoOrdenacao == null || direcaoOrdenacao.isEmpty()) {
+            direcaoOrdenacao = "desc";  // Direção padrão
+        }
+
+        // Definindo a direção da ordenação
+        Sort.Direction direction;
+        if ("desc".equalsIgnoreCase(direcaoOrdenacao)) {
+            direction = Sort.Direction.DESC;
+        } else if ("asc".equalsIgnoreCase(direcaoOrdenacao)) {
+            direction = Sort.Direction.ASC;
+        } else {
+            throw new IllegalArgumentException("Direção de ordenação inválida: " + direcaoOrdenacao);
+        }
+
+        // Retornar a lista de tarefas ordenada e filtrada
+        if (status != null) {
+            return tarefaRepository.findByStatus(status, Sort.by(direction, campoOrdenacao));
+        } else {
+            return tarefaRepository.findAll(Sort.by(direction, campoOrdenacao));
+        }
     }
 
     // Buscar tarefa por ID
