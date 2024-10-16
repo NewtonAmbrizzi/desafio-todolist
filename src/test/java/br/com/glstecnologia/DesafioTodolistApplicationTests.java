@@ -1,4 +1,4 @@
-package br.com.glstecnologia.desafio_todolist;
+package br.com.glstecnologia;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

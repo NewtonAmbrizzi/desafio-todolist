@@ -1,4 +1,4 @@
-package br.com.glstecnologia.desafio_todolist;
+package br.com.glstecnologia;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

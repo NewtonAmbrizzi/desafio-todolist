@@ -1,7 +1,8 @@
 package br.com.glstecnologia.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "tarefas")
@@ -22,18 +23,17 @@ public class Tarefa {
     private Status status;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime dataCriacao;
+    private Date dataCriacao;
 
     public Tarefa() {
-        this.dataCriacao = LocalDateTime.now();
-        this.status = Status.PENDENTE; // Status inicial
     }
 
-    public Tarefa(String titulo, String descricao, Status status) {
+    public Tarefa(Long id, String titulo, String descricao, Status status, Date dataCriacao) {
+        this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.status = status;
-        this.dataCriacao = LocalDateTime.now();
+        this.dataCriacao = dataCriacao;
     }
 
     public Long getId() {
@@ -68,11 +68,13 @@ public class Tarefa {
         this.status = status;
     }
 
-    public LocalDateTime getDataCriacao() {
+    public Date getDataCriacao() {
         return dataCriacao;
     }
 
-    // Não deve ter setDataCriacao para garantir imutabilidade após a criação da tarefa.
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
 
     @Override
     public String toString() {
